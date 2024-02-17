@@ -8,5 +8,4 @@ const Home: React.FC = () => {
 
 export default Home;
 
-
 //npm run format
