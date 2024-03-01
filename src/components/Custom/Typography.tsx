@@ -8,7 +8,7 @@ const Text: React.FC<CustomTypographyProps> = ({ children }) => {
   return (
     <Typography
       style={{
-        fontFamily: 'Epilogue',
+        fontFamily: '"Epilogue", sans-serif',
         color: '#01001F',
       }}
     >
