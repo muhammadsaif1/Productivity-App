@@ -4,13 +4,14 @@ import Typography, { TypographyProps } from '@mui/material/Typography';
 interface CustomTypographyProps extends TypographyProps {
   children: ReactNode;
 }
-const Text: React.FC<CustomTypographyProps> = ({ children }) => {
+const Text: React.FC<CustomTypographyProps> = ({ children, ...props }) => {
   return (
     <Typography
       style={{
         fontFamily: '"Epilogue", sans-serif',
-        color: '#01001F',
+        color: '#06002A',
       }}
+      {...props}
     >
       {children}
     </Typography>
