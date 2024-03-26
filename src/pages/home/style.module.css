@@ -3,16 +3,27 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 30vh;
+  min-height: 0;
 }
 
 .heading {
   margin: 6px 0;
   padding: 4px;
   text-align: center;
+  padding-top: 3%;
+  font-weight: 800 !important;
+  font-size: 3em !important;
 }
 .tagline {
   text-align: center;
+  font-weight: 600 !important;
+  padding-top: 1%;
+  font-size: 2em !important;
+}
+
+.addTask {
+  display: flex;
+  align-items: center;
 }
 
 .form {
@@ -27,14 +38,14 @@
   gap: 20px;
   position: fixed;
 }
-.addButton {
-  margin-left: 16px !important;
-}
-.noTasks {
-  margin-top: 10%;
+
+.tasksrender {
+  margin-top: 5rem;
   display: flex;
   flex-direction: column;
-  align-items: normal;
+  align-items: center;
+  width: 60em;
+  max-width: 800px;
 }
 .addTask {
   align-self: center;
@@ -42,35 +53,143 @@
 
 .taskList {
   list-style: none;
-  padding: 0;
+  padding: 1px;
   display: flex;
+
   flex-wrap: wrap;
+  max-width: 44rem;
+  width: 100%;
+  /* margin-top: 4rem; */
+  align-items: flex-start; /**/
 }
 .task {
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 16px;
+  padding: 1rem;
   margin: 8px;
-  width: 250px;
+  width: 100%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
 }
 .taskDesc {
-  font-size: 14px;
+  font-size: 18px !important;
 }
 .taskTitle {
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 8px;
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  margin-bottom: 4px !important;
+  flex: 1;
+}
+.taskContainer {
+  display: flex;
+  justify-content: space-between;
+}
+.taskButtons {
+  display: flex;
+  margin-left: auto;
+}
+.editButton {
+  color: green !important;
+  margin-left: 5px !important;
+}
+.deleteButton {
+  color: red !important;
+  margin-left: 5px !important;
+}
+
+.modalButtons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.modalButtons button {
+  flex: 1;
+  margin-right: 0.5rem;
+}
+
+.modalOpenButton {
+  display: 'flex' !important;
+  align-items: center !important;
+  gap: '0.5rem' !important;
+  margin-top: 4px !important;
+  left: 6rem;
+}
+.plusButton {
+  position: absolute !important;
+  top: 3em !important;
+  right: 2em;
+}
+.notaskText {
+  margin-top: 2rem !important;
 }
 
 @media screen and (max-width: 600px) {
   .form {
     width: 100%;
   }
+  .heading {
+    font-size: 1rem !important;
+  }
+  .tagline {
+    font-size: 0.6rem !important;
+  }
+  .notaskText {
+    font-size: 0.8rem !important;
+  }
+  .modalOpenButton {
+    font-size: 0.5rem !important;
+    width: 5.5rem !important;
+    height: 1.5rem !important;
+    left: 2.5em !important;
+  }
+  .plusIcon {
+    width: 1rem !important;
+  }
+  .tasksrender {
+    width: 19rem;
+  }
+  .task {
+    width: 15.5rem;
+    padding: 10px;
+  }
+  .plusButton {
+    width: 1.8rem !important;
+    height: 1.8rem !important;
+  }
+  .taskTitle {
+    font-size: 16px !important;
+  }
+  .taskDesc {
+    font-size: 10px;
+  }
 }
 @media screen and (min-width: 601px) and (max-width: 900px) {
   .form {
     width: 50%;
+  }
+  .heading {
+    font-size: 2.1rem !important;
+  }
+  .tagline {
+    font-size: 1.5rem !important;
+  }
+  .notaskText {
+    font-size: 2rem !important;
+  }
+  .tasksrender {
+    width: 37rem;
+  }
+  .task {
+    width: 32rem !important;
+    padding: 12px !important;
+  }
+  .taskTitle {
+    font-size: 20px !important;
+  }
+  .taskDesc {
+    font-size: 14px;
   }
 }
 @media screen and (min-width: 901px) and (max-width: 1200px) {
@@ -78,8 +197,27 @@
     width: 70%;
   }
 }
-@media screen and (min-width: 300px) {
+@media screen and (max-width: 300px) {
   .form {
     width: 50%;
+  }
+  .heading {
+    font-size: 0.8rem !important;
+  }
+  .tagline {
+    font-size: 0.5rem !important;
+  }
+  .tasksrender {
+    width: 15rem;
+  }
+  .task {
+    width: 11.5rem;
+    padding: 8px;
+  }
+  .taskTitle {
+    font-size: 14px !important;
+  }
+  .taskDesc {
+    font-size: 8px;
   }
 }
