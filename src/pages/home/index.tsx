@@ -56,6 +56,10 @@ const Home: React.FC = () => {
     setIsModalOpen(false);
     setTitleError(false);
   };
+  const deleteHandler = (indexToDelete: number) => {
+    const updatedTasks = mainTask.filter((_, index) => index !== indexToDelete);
+    setMainTask(updatedTasks);
+  };
 
   return (
     <div className={classes.head}>
@@ -81,7 +85,13 @@ const Home: React.FC = () => {
                       <IconButton className={classes.editButton} size="small">
                         <EditIcon fontSize="small" />
                       </IconButton>
-                      <IconButton className={classes.deleteButton} size="small">
+                      <IconButton
+                        onClick={() => {
+                          deleteHandler(i);
+                        }}
+                        className={classes.deleteButton}
+                        size="small"
+                      >
                         <DeleteIcon fontSize="small" />
                       </IconButton>
                     </div>
