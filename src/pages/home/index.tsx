@@ -8,10 +8,15 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { format } from 'date-fns';
+import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
 
 const currentDay: string = new Date().toLocaleDateString('en-US', {
   weekday: 'long',
 });
+
 const modalStyle = {
   position: 'absolute',
   top: '50%',
@@ -23,24 +28,27 @@ const modalStyle = {
   minWidth: 300,
   maxWidth: 400,
   width: '80%',
+  borderRadius: 4,
 };
 
 const Home: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [desc, setDesc] = useState('');
-  const [mainTask, setMainTask] = useState<{ title: string; desc: string }[]>(
-    [],
-  );
+  const [mainTask, setMainTask] = useState<
+    { title: string; desc: string; dateTime: string; deadline: string }[]
+  >([]);
   const [titleError, setTitleError] = useState<boolean>(false);
-
+  const [date, setDate] = useState<dayjs.Dayjs | null>(dayjs());
   const openModalHandler = () => {
     setIsModalOpen(true);
+    document.body.style.overflow = 'enabled';
   };
 
   const closeModalHandler = () => {
     setIsModalOpen(false);
     setTitleError(false);
+    document.body.classList.remove('modal-open');
   };
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
@@ -50,7 +58,12 @@ const Home: React.FC = () => {
       setTitleError(true);
       return;
     }
-    setMainTask([...mainTask, { title, desc }]);
+    const dateTime: string = format(new Date(), 'dd-MMM-yyyy hh:mm:ss a');
+    const deadline: string = date
+      ? format(date.toDate(), 'dd MMM, yyyy hh:mm a')
+      : '';
+
+    setMainTask([...mainTask, { title, desc, dateTime, deadline }]);
     setDesc('');
     setTitle('');
     setIsModalOpen(false);
@@ -100,6 +113,18 @@ const Home: React.FC = () => {
                   <Text variant="body1" className={classes.taskDesc}>
                     {t.desc}
                   </Text>
+                  <div className={classes.dateContainer}>
+                    <Text
+                      variant="caption"
+                      fontWeight={500}
+                      style={{ color: 'grey' }}
+                    >
+                      Updated by - {t.dateTime}
+                    </Text>
+                    <Text variant="body1" fontWeight={600}>
+                      Due by - {t.deadline}
+                    </Text>
+                  </div>
                 </div>
               </li>
             ))}
@@ -154,6 +179,16 @@ const Home: React.FC = () => {
                 fullWidth
                 margin="normal"
               />
+              <div className={classes.dateContainer}>
+                <label>Due by </label>
+                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                  <DateTimePicker
+                    value={date}
+                    onChange={(newDate) => setDate(newDate || null)}
+                  />
+                </LocalizationProvider>
+              </div>
+
               <div className={classes.modalButtons}>
                 <Button type="submit" variant="contained" color="success">
                   Add Task
