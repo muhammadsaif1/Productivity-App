@@ -44,6 +44,7 @@ function Navbar() {
         <Container maxWidth="xl">
           <Toolbar disableGutters>
             <Typography
+              className={classes.navText}
               variant="h6"
               noWrap
               component={NavLink}

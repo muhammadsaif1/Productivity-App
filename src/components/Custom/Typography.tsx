@@ -7,7 +7,7 @@ interface CustomTypographyProps extends TypographyProps {
 const Text: React.FC<CustomTypographyProps> = ({ children, ...props }) => {
   return (
     <Typography
-      style={{
+      sx={{
         fontFamily: '"Epilogue", sans-serif',
         color: '#06002A',
       }}

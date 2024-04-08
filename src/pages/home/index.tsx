@@ -1,77 +1,82 @@
-import Text from '../../components/Custom/Typography';
-import { IconButton, TextField } from '@mui/material';
-import { Button } from '@mui/material';
-import classes from './style.module.css';
 import React, { useState } from 'react';
+import Text from '../../components/Custom/Typography';
+import { Button, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { format } from 'date-fns';
-import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
+import TaskFormModal from './TaskFormModal';
+import classes from './style.module.css';
 
 const currentDay: string = new Date().toLocaleDateString('en-US', {
   weekday: 'long',
 });
 
-const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 3,
-  minWidth: 300,
-  maxWidth: 400,
-  width: '80%',
-  borderRadius: 4,
-};
-
 const Home: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
-  const [desc, setDesc] = useState('');
+  const [desc, setDesc] = useState<string>('');
   const [mainTask, setMainTask] = useState<
     { title: string; desc: string; dateTime: string; deadline: string }[]
   >([]);
   const [titleError, setTitleError] = useState<boolean>(false);
   const [date, setDate] = useState<dayjs.Dayjs | null>(dayjs());
+  const [editingTaskIndex, setEditingTaskIndex] = useState<number | null>(null);
+
   const openModalHandler = () => {
     setIsModalOpen(true);
-    document.body.style.overflow = 'enabled';
   };
 
   const closeModalHandler = () => {
     setIsModalOpen(false);
     setTitleError(false);
-    document.body.classList.remove('modal-open');
+    setDesc('');
+    setTitle('');
+    setEditingTaskIndex(null);
   };
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (title.length == 0) {
+    if (title.length === 0) {
       setTitleError(true);
       return;
     }
-    const dateTime: string = format(new Date(), 'dd-MMM-yyyy hh:mm:ss a');
+
+    const dateTime: string = format(new Date(), 'dd MMM, yyyy hh:mm:ss a');
     const deadline: string = date
       ? format(date.toDate(), 'dd MMM, yyyy hh:mm a')
       : '';
 
-    setMainTask([...mainTask, { title, desc, dateTime, deadline }]);
+    if (editingTaskIndex !== null) {
+      // Editing an existing task
+      const updatedMainTask = [...mainTask];
+      updatedMainTask[editingTaskIndex] = { title, desc, dateTime, deadline };
+      setMainTask(updatedMainTask);
+      setEditingTaskIndex(null); // Reset editingTaskIndex
+    } else {
+      // Adding a new task
+      setMainTask([...mainTask, { title, desc, dateTime, deadline }]);
+    }
+
     setDesc('');
     setTitle('');
     setIsModalOpen(false);
     setTitleError(false);
   };
+
   const deleteHandler = (indexToDelete: number) => {
     const updatedTasks = mainTask.filter((_, index) => index !== indexToDelete);
     setMainTask(updatedTasks);
+  };
+  const editHandler = (index: number) => {
+    const taskToEdit = mainTask[index];
+    setTitle(taskToEdit.title);
+    setDesc(taskToEdit.desc);
+    setDate(dayjs(taskToEdit.deadline));
+    setEditingTaskIndex(index);
+    openModalHandler();
   };
 
   return (
@@ -85,6 +90,20 @@ const Home: React.FC = () => {
         </Text>
       </div>
       <div style={{ position: 'relative' }}>
+        <TaskFormModal
+          isModalOpen={isModalOpen}
+          closeModalHandler={closeModalHandler}
+          title={title}
+          setTitle={setTitle}
+          desc={desc}
+          setDesc={setDesc}
+          date={date}
+          setDate={setDate}
+          submitHandler={submitHandler}
+          titleError={titleError}
+          editingTaskIndex={editingTaskIndex}
+        />
+
         {mainTask.length > 0 ? (
           <div className={classes.tasksrender}>
             {mainTask.map((t, i) => (
@@ -95,7 +114,13 @@ const Home: React.FC = () => {
                       {t.title}
                     </Text>
                     <div className="taskButtons">
-                      <IconButton className={classes.editButton} size="small">
+                      <IconButton
+                        onClick={() => {
+                          editHandler(i);
+                        }}
+                        className={classes.editButton}
+                        size="small"
+                      >
                         <EditIcon fontSize="small" />
                       </IconButton>
                       <IconButton
@@ -114,15 +139,15 @@ const Home: React.FC = () => {
                     {t.desc}
                   </Text>
                   <div className={classes.dateContainer}>
+                    <Text variant="body1" fontWeight={600}>
+                      Due by : {t.deadline}
+                    </Text>
                     <Text
                       variant="caption"
                       fontWeight={500}
-                      style={{ color: 'grey' }}
+                      sx={{ mt: '0.35rem', color: 'grey', fontSize: '10px' }}
                     >
-                      Updated by - {t.dateTime}
-                    </Text>
-                    <Text variant="body1" fontWeight={600}>
-                      Due by - {t.deadline}
+                      Last updated : {t.dateTime}
                     </Text>
                   </div>
                 </div>
@@ -134,6 +159,7 @@ const Home: React.FC = () => {
             No Tasks to Display
           </Text>
         )}
+
         {mainTask.length > 0 ? (
           <Button
             onClick={openModalHandler}
@@ -152,59 +178,6 @@ const Home: React.FC = () => {
           </Button>
         )}
       </div>
-      {isModalOpen && (
-        <Modal open={isModalOpen} onClose={closeModalHandler}>
-          <Box sx={modalStyle}>
-            <form onSubmit={submitHandler}>
-              <TextField
-                id="title"
-                label="Title"
-                variant="outlined"
-                value={title}
-                onChange={(e) => {
-                  setTitle(e.target.value);
-                  setTitleError(false);
-                }}
-                fullWidth
-                margin="normal"
-                error={titleError}
-                helperText={titleError ? '*Title is required' : ''}
-              />
-              <TextField
-                id="description"
-                label="Description"
-                variant="outlined"
-                value={desc}
-                onChange={(e) => setDesc(e.target.value)}
-                fullWidth
-                margin="normal"
-              />
-              <div className={classes.dateContainer}>
-                <label>Due by </label>
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <DateTimePicker
-                    value={date}
-                    onChange={(newDate) => setDate(newDate || null)}
-                  />
-                </LocalizationProvider>
-              </div>
-
-              <div className={classes.modalButtons}>
-                <Button type="submit" variant="contained" color="success">
-                  Add Task
-                </Button>
-                <Button
-                  onClick={closeModalHandler}
-                  variant="contained"
-                  color="error"
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          </Box>
-        </Modal>
-      )}
     </div>
   );
 };
