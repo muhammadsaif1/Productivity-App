@@ -34,12 +34,13 @@ const Home: React.FC = () => {
     setDesc('');
     setTitle('');
     setEditingTaskIndex(null);
+    setDate(dayjs());
   };
 
   const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (title.length === 0) {
+    if (title.length < 1 || !title.length) {
       setTitleError(true);
       return;
     }
@@ -64,6 +65,7 @@ const Home: React.FC = () => {
     setTitle('');
     setIsModalOpen(false);
     setTitleError(false);
+    setDate(dayjs());
   };
 
   const deleteHandler = (indexToDelete: number) => {
