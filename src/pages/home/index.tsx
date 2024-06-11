@@ -1,28 +1,68 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Text from '../../components/Custom/Typography';
 import { Button, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import dayjs from 'dayjs';
 import TaskFormModal from './TaskFormModal';
 import classes from './style.module.css';
+import axios, { AxiosError } from 'axios';
 
 const currentDay: string = new Date().toLocaleDateString('en-US', {
   weekday: 'long',
 });
 
+interface Task {
+  _id: string;
+  title: string;
+  description: string;
+  createdAt: string;
+  deadline: string;
+}
+
 const Home: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>('');
   const [desc, setDesc] = useState<string>('');
-  const [mainTask, setMainTask] = useState<
-    { title: string; desc: string; dateTime: string; deadline: string }[]
-  >([]);
+  const [mainTask, setMainTask] = useState<Task[]>([]);
   const [titleError, setTitleError] = useState<boolean>(false);
+  const [descriptionError, setDescriptionError] = useState<boolean>(false);
   const [date, setDate] = useState<dayjs.Dayjs | null>(dayjs());
   const [editingTaskIndex, setEditingTaskIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = await axios.get<{ success: boolean; data: Task[] }>(
+          'https://saif-project-27e9eb091b33.herokuapp.com/api/fetchTasks',
+        );
+        if (response.data.success) {
+          const data = response.data.data.map((item) => ({
+            title: item.title,
+            description: item.description,
+            _id: item._id,
+            createdAt: item.createdAt,
+            deadline: item.deadline,
+          }));
+          setMainTask(data);
+        } else {
+          console.error('Failed to fetch tasks:', response.data);
+        }
+      } catch (err) {
+        const error = err as AxiosError;
+        console.error(
+          'Error fetching tasks:',
+          error.message,
+          error.response?.data,
+        );
+      }
+    };
+
+    fetchTasks();
+    console.log(mainTask);
+  }, []);
 
   const openModalHandler = () => {
     setIsModalOpen(true);
@@ -31,51 +71,98 @@ const Home: React.FC = () => {
   const closeModalHandler = () => {
     setIsModalOpen(false);
     setTitleError(false);
+    setDescriptionError(false);
     setDesc('');
     setTitle('');
     setEditingTaskIndex(null);
     setDate(dayjs());
   };
 
-  const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (title.length < 1 || !title.length) {
       setTitleError(true);
       return;
     }
+    if (desc.length < 1 || !desc.length) {
+      setDescriptionError(true);
+      return;
+    }
 
-    const dateTime: string = format(new Date(), 'dd MMM, yyyy hh:mm:ss a');
     const deadline: string = date
       ? format(date.toDate(), 'dd MMM, yyyy hh:mm a')
       : '';
 
-    if (editingTaskIndex !== null) {
-      // Editing an existing task
-      const updatedMainTask = [...mainTask];
-      updatedMainTask[editingTaskIndex] = { title, desc, dateTime, deadline };
-      setMainTask(updatedMainTask);
-      setEditingTaskIndex(null); // Reset editingTaskIndex
-    } else {
-      // Adding a new task
-      setMainTask([...mainTask, { title, desc, dateTime, deadline }]);
+    const taskPayload = { title, description: desc, deadline };
+
+    try {
+      const response = await axios.post(
+        'https://saif-project-27e9eb091b33.herokuapp.com/api/createTask',
+        taskPayload,
+      );
+
+      if (response.data.success) {
+        const updatedTask: Task = response.data.data;
+        let updatedMainTask = [...mainTask];
+        updatedMainTask = [...mainTask, updatedTask];
+        setMainTask(updatedMainTask);
+      } else {
+        console.error('Failed to create task:', response.data.message);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Error creating task:', error.message);
+        console.log('Error response:', error.response);
+        console.log('Error response data:', error.response?.data);
+      } else {
+        console.error('Non-Axios error occurred:', error);
+      }
     }
 
-    setDesc('');
-    setTitle('');
-    setIsModalOpen(false);
-    setTitleError(false);
-    setDate(dayjs());
+    closeModalHandler();
   };
 
-  const deleteHandler = (indexToDelete: number) => {
-    const updatedTasks = mainTask.filter((_, index) => index !== indexToDelete);
-    setMainTask(updatedTasks);
+  const deleteHandler = async (indexToDelete: number) => {
+    const taskId = mainTask[indexToDelete]?._id;
+    if (!taskId) {
+      console.error('Task ID is missing for the task to be deleted.');
+      return;
+    }
+    try {
+      console.log('Deleting task...');
+      console.log('Deleting task id', taskId);
+
+      const response = await axios.delete(
+        `https://saif-project-27e9eb091b33.herokuapp.com/api/deleteTask/${taskId}`,
+      );
+      if (response.data.success) {
+        const updatedTasks = mainTask.filter(
+          (_, index) => index !== indexToDelete,
+        );
+        setMainTask(updatedTasks);
+      } else {
+        console.error('Failed to delete task:', response.data.message);
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Error deleting task:', error.message);
+        console.log('Error response:', error.response);
+        console.log('Error response data:', error.response?.data);
+      } else {
+        console.error('Non-Axios error occurred:', error);
+      }
+    }
   };
+
   const editHandler = (index: number) => {
     const taskToEdit = mainTask[index];
+    if (!taskToEdit) {
+      console.error('Task to edit is not found.');
+      return;
+    }
     setTitle(taskToEdit.title);
-    setDesc(taskToEdit.desc);
+    setDesc(taskToEdit.description);
     setDate(dayjs(taskToEdit.deadline));
     setEditingTaskIndex(index);
     openModalHandler();
@@ -103,58 +190,79 @@ const Home: React.FC = () => {
           setDate={setDate}
           submitHandler={submitHandler}
           titleError={titleError}
+          descriptionError={descriptionError}
           editingTaskIndex={editingTaskIndex}
         />
 
-        {mainTask.length > 0 ? (
+        {mainTask && mainTask.length > 0 ? (
           <div className={classes.tasksrender}>
-            {mainTask.map((t, i) => (
-              <li key={i} className={classes.taskList}>
-                <div className={classes.task}>
-                  <div className={classes.taskContainer}>
-                    <Text variant="h5" className={classes.taskTitle}>
-                      {t.title}
-                    </Text>
-                    <div className="taskButtons">
-                      <IconButton
-                        onClick={() => {
-                          editHandler(i);
-                        }}
-                        className={classes.editButton}
-                        size="small"
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        onClick={() => {
-                          deleteHandler(i);
-                        }}
-                        className={classes.deleteButton}
-                        size="small"
-                      >
-                        <DeleteIcon fontSize="small" />
-                      </IconButton>
-                    </div>
-                  </div>
+            {mainTask.map((t, i) => {
+              return (
+                <li key={t?._id ?? i} className={classes.taskList}>
+                  {t ? (
+                    <div className={classes.task}>
+                      <div className={classes.taskContainer}>
+                        <Text variant="h5" className={classes.taskTitle}>
+                          {t.title}
+                        </Text>
+                        <div className="taskButtons">
+                          <IconButton
+                            onClick={() => {
+                              editHandler(i);
+                            }}
+                            className={classes.editButton}
+                            size="small"
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                          <IconButton
+                            onClick={() => {
+                              deleteHandler(i);
+                            }}
+                            className={classes.deleteButton}
+                            size="small"
+                          >
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </div>
+                      </div>
 
-                  <Text variant="body1" className={classes.taskDesc}>
-                    {t.desc}
-                  </Text>
-                  <div className={classes.dateContainer}>
-                    <Text variant="body1" fontWeight={600}>
-                      Due by : {t.deadline}
-                    </Text>
+                      <Text variant="body1" className={classes.taskDesc}>
+                        {t.description}
+                      </Text>
+                      <div className={classes.dateContainer}>
+                        <Text variant="body1" fontWeight={600}>
+                          Due by: {format(t.deadline, 'dd MMM, yyyy hh:mm a')}
+                        </Text>
+                        <Text
+                          variant="caption"
+                          fontWeight={500}
+                          sx={{
+                            mt: '0.35rem',
+                            color: 'grey',
+                            fontSize: '10px',
+                          }}
+                        >
+                          Updated by:{' '}
+                          {format(
+                            parseISO(t.createdAt),
+                            'dd MMM, yyyy hh:mm a',
+                          )}
+                        </Text>
+                      </div>
+                    </div>
+                  ) : (
                     <Text
-                      variant="caption"
-                      fontWeight={500}
-                      sx={{ mt: '0.35rem', color: 'grey', fontSize: '10px' }}
+                      className={classes.notaskText}
+                      variant="body1"
+                      color="error"
                     >
-                      Last updated : {t.dateTime}
+                      Error: Task data is missing.
                     </Text>
-                  </div>
-                </div>
-              </li>
-            ))}
+                  )}
+                </li>
+              );
+            })}
           </div>
         ) : (
           <Text className={classes.notaskText} variant="h4" fontWeight={'bold'}>
@@ -162,23 +270,15 @@ const Home: React.FC = () => {
           </Text>
         )}
 
-        {mainTask.length > 0 ? (
-          <Button
-            onClick={openModalHandler}
-            variant="outlined"
-            className={classes.plusButton}
-          >
-            <AddIcon />
-          </Button>
-        ) : (
-          <Button
-            onClick={openModalHandler}
-            variant="outlined"
-            className={classes.modalOpenButton}
-          >
-            Add Task <AddIcon className={classes.plusIcon} />
-          </Button>
-        )}
+        <Button
+          onClick={openModalHandler}
+          variant="outlined"
+          className={
+            mainTask.length > 0 ? classes.plusButton : classes.modalOpenButton
+          }
+        >
+          Add Task <AddIcon />
+        </Button>
       </div>
     </div>
   );

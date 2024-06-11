@@ -18,6 +18,7 @@ interface TaskFormModalProps {
   setDate: React.Dispatch<React.SetStateAction<dayjs.Dayjs | null>>;
   submitHandler: (e: React.FormEvent<HTMLFormElement>) => void;
   titleError: boolean;
+  descriptionError: boolean;
   editingTaskIndex: number | null;
 }
 
@@ -32,6 +33,7 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({
   setDate,
   submitHandler,
   titleError,
+  descriptionError,
   editingTaskIndex,
 }) => {
   const modalStyle = {
@@ -76,6 +78,8 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({
             onChange={(e) => setDesc(e.target.value)}
             fullWidth
             margin="normal"
+            error={descriptionError}
+            helperText={descriptionError ? '*Description is required' : ''}
           />
 
           <div className={classes.dateContainer}>
