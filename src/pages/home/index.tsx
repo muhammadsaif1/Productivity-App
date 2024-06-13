@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Text from '../../components/Custom/Typography';
-import { Button, IconButton } from '@mui/material';
+import { Button, CircularProgress, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -31,6 +31,8 @@ const Home: React.FC = () => {
   const [descriptionError, setDescriptionError] = useState<boolean>(false);
   const [date, setDate] = useState<dayjs.Dayjs | null>(dayjs());
   const [editingTaskIndex, setEditingTaskIndex] = useState<number | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [addingTask, setAddingTask] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -46,7 +48,7 @@ const Home: React.FC = () => {
             createdAt: item.createdAt,
             deadline: item.deadline,
           }));
-          setMainTask(data);
+          setMainTask(data.reverse());
         } else {
           console.error('Failed to fetch tasks:', response.data);
         }
@@ -58,10 +60,10 @@ const Home: React.FC = () => {
           error.response?.data,
         );
       }
+      setIsLoading(false);
     };
 
     fetchTasks();
-    console.log(mainTask);
   }, []);
 
   const openModalHandler = () => {
@@ -76,11 +78,11 @@ const Home: React.FC = () => {
     setTitle('');
     setEditingTaskIndex(null);
     setDate(dayjs());
+    setAddingTask(false);
   };
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     if (title.length < 1 || !title.length) {
       setTitleError(true);
       return;
@@ -89,10 +91,8 @@ const Home: React.FC = () => {
       setDescriptionError(true);
       return;
     }
-
-    const deadline: string = date
-      ? format(date.toDate(), 'dd MMM, yyyy hh:mm a')
-      : '';
+    setAddingTask(true);
+    const deadline: string = date ? date.toString() : '';
 
     const taskPayload = { title, description: desc, deadline };
 
@@ -105,7 +105,7 @@ const Home: React.FC = () => {
       if (response.data.success) {
         const updatedTask: Task = response.data.data;
         let updatedMainTask = [...mainTask];
-        updatedMainTask = [...mainTask, updatedTask];
+        updatedMainTask = [updatedTask, ...mainTask];
         setMainTask(updatedMainTask);
       } else {
         console.error('Failed to create task:', response.data.message);
@@ -192,9 +192,14 @@ const Home: React.FC = () => {
           titleError={titleError}
           descriptionError={descriptionError}
           editingTaskIndex={editingTaskIndex}
+          addingTask={addingTask}
         />
 
-        {mainTask && mainTask.length > 0 ? (
+        {isLoading ? (
+          <div className="loader">
+            <CircularProgress size={80} />
+          </div>
+        ) : mainTask && mainTask.length > 0 ? (
           <div className={classes.tasksrender}>
             {mainTask.map((t, i) => {
               return (
@@ -266,19 +271,22 @@ const Home: React.FC = () => {
           </div>
         ) : (
           <Text className={classes.notaskText} variant="h4" fontWeight={'bold'}>
-            No Tasks to Display
+            No tasks to display
           </Text>
         )}
-
-        <Button
-          onClick={openModalHandler}
-          variant="outlined"
-          className={
-            mainTask.length > 0 ? classes.plusButton : classes.modalOpenButton
-          }
-        >
-          Add Task <AddIcon />
-        </Button>
+        {isLoading ? (
+          ''
+        ) : (
+          <Button
+            onClick={openModalHandler}
+            variant="outlined"
+            className={
+              mainTask.length > 0 ? classes.plusButton : classes.modalOpenButton
+            }
+          >
+            Add Task <AddIcon />
+          </Button>
+        )}
       </div>
     </div>
   );

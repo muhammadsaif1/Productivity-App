@@ -3,7 +3,7 @@ import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { TextField, Button } from '@mui/material';
+import { TextField, Button, CircularProgress } from '@mui/material';
 import dayjs from 'dayjs';
 import classes from './style.module.css';
 
@@ -20,6 +20,7 @@ interface TaskFormModalProps {
   titleError: boolean;
   descriptionError: boolean;
   editingTaskIndex: number | null;
+  addingTask: boolean;
 }
 
 const TaskFormModal: React.FC<TaskFormModalProps> = ({
@@ -35,6 +36,7 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({
   titleError,
   descriptionError,
   editingTaskIndex,
+  addingTask,
 }) => {
   const modalStyle = {
     position: 'absolute',
@@ -49,7 +51,7 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({
     width: '80%',
     borderRadius: 4,
   };
-
+  console.log('Selected date:', date ? date.format() : 'null');
   return (
     <Modal open={isModalOpen} onClose={closeModalHandler}>
       <Box sx={modalStyle}>
@@ -94,12 +96,22 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({
 
           <div className={classes.modalButtons}>
             {editingTaskIndex !== null ? (
-              <Button type="submit" variant="contained" color="primary">
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={addingTask}
+              >
                 Update
               </Button>
             ) : (
-              <Button type="submit" variant="contained" color="primary">
-                Add Task
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={addingTask}
+              >
+                {addingTask ? <CircularProgress size={20} /> : 'Add Task'}
               </Button>
             )}
             <Button
