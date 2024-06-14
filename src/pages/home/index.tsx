@@ -83,6 +83,7 @@ const Home: React.FC = () => {
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (title.length < 1 || !title.length) {
       setTitleError(true);
       return;
@@ -92,27 +93,44 @@ const Home: React.FC = () => {
       return;
     }
     setAddingTask(true);
+
     const deadline: string = date ? date.toString() : '';
 
     const taskPayload = { title, description: desc, deadline };
 
     try {
-      const response = await axios.post(
-        'https://saif-project-27e9eb091b33.herokuapp.com/api/createTask',
-        taskPayload,
-      );
+      if (editingTaskIndex !== null) {
+        const taskId = mainTask[editingTaskIndex]._id;
+        const response = await axios.put(
+          `https://saif-project-27e9eb091b33.herokuapp.com/api/updateTask/${taskId}`,
+          taskPayload,
+        );
 
-      if (response.data.success) {
-        const updatedTask: Task = response.data.data;
-        let updatedMainTask = [...mainTask];
-        updatedMainTask = [updatedTask, ...mainTask];
-        setMainTask(updatedMainTask);
+        if (response.data.success) {
+          const updatedTask: Task = response.data.data;
+          const updatedMainTask = [...mainTask];
+          updatedMainTask[editingTaskIndex] = updatedTask;
+          setMainTask(updatedMainTask);
+        } else {
+          console.error('Failed to update task:', response.data.message);
+        }
       } else {
-        console.error('Failed to create task:', response.data.message);
+        const response = await axios.post(
+          'https://saif-project-27e9eb091b33.herokuapp.com/api/createTask',
+          taskPayload,
+        );
+
+        if (response.data.success) {
+          const updatedTask: Task = response.data.data;
+          const updatedMainTask = [updatedTask, ...mainTask];
+          setMainTask(updatedMainTask);
+        } else {
+          console.error('Failed to create task:', response.data.message);
+        }
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error('Error creating task:', error.message);
+        console.error('Error:', error.message);
         console.log('Error response:', error.response);
         console.log('Error response data:', error.response?.data);
       } else {

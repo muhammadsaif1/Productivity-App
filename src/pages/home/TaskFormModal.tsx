@@ -51,7 +51,6 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({
     width: '80%',
     borderRadius: 4,
   };
-  console.log('Selected date:', date ? date.format() : 'null');
   return (
     <Modal open={isModalOpen} onClose={closeModalHandler}>
       <Box sx={modalStyle}>
@@ -102,7 +101,7 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({
                 color="primary"
                 disabled={addingTask}
               >
-                Update
+                {addingTask ? <CircularProgress size={20} /> : 'Update'}
               </Button>
             ) : (
               <Button
