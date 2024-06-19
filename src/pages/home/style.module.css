@@ -67,6 +67,10 @@
   margin-bottom: 4px !important;
   flex: 1;
 }
+.link {
+  text-decoration: none;
+  color: inherit;
+}
 .taskContainer {
   display: flex;
   justify-content: space-between;

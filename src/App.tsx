@@ -4,7 +4,7 @@ import AboutUs from './pages/about-us/index';
 import Stats from './pages/stats/index';
 import Calender from './pages/calender/index';
 import RootLayout from './pages/Root';
-
+import TaskDetail from './pages/taskDetail/index';
 const router = createBrowserRouter([
   {
     path: '/',
@@ -14,6 +14,7 @@ const router = createBrowserRouter([
       { path: 'about-us', element: <AboutUs /> },
       { path: 'stats', element: <Stats /> },
       { path: 'calendar', element: <Calender /> },
+      { path: '/task/:taskId', element: <TaskDetail /> },
     ],
   },
 ]);

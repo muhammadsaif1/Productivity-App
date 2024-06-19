@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import TaskFormModal from './TaskFormModal';
 import classes from './style.module.css';
 import axios, { AxiosError } from 'axios';
+import { NavLink } from 'react-router-dom';
 
 const currentDay: string = new Date().toLocaleDateString('en-US', {
   weekday: 'long',
@@ -148,9 +149,6 @@ const Home: React.FC = () => {
       return;
     }
     try {
-      console.log('Deleting task...');
-      console.log('Deleting task id', taskId);
-
       const response = await axios.delete(
         `https://saif-project-27e9eb091b33.herokuapp.com/api/deleteTask/${taskId}`,
       );
@@ -226,7 +224,12 @@ const Home: React.FC = () => {
                     <div className={classes.task}>
                       <div className={classes.taskContainer}>
                         <Text variant="h5" className={classes.taskTitle}>
-                          {t.title}
+                          <NavLink
+                            className={classes.link}
+                            to={`/task/${t._id}`}
+                          >
+                            {t.title}
+                          </NavLink>
                         </Text>
                         <div className="taskButtons">
                           <IconButton
