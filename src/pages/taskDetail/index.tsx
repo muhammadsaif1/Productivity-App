@@ -17,7 +17,6 @@ const TaskDetail: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { mainTask, editHandler, deleteHandler } = useContext(TaskContext);
-  // const [isDeleting,setIsDeleting] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -26,7 +25,6 @@ const TaskDetail: React.FC = () => {
           `https://saif-project-27e9eb091b33.herokuapp.com/api/fetchTask/${taskId}`,
         );
         if (response.data.success) {
-          console.log('Task fetched successfully:', response.data.data);
           setTask(response.data.data);
         } else {
           console.error('Task not found in response:', response);
