@@ -82,30 +82,30 @@ export const TaskContext = createContext<ContextType>({
 
 const StyledDialog = styled(Dialog)(() => ({
   '& .MuiDialog-paper': {
-    background: 'linear-gradient(135deg, #f6d365 0%, #fda085 100%)',
+    background: '#ffffff',
     borderRadius: '15px',
   },
 }));
 
 const StyledDialogTitle = styled(DialogTitle)(() => ({
-  color: '#ffffff',
+  color: '#000000',
   textAlign: 'center',
   fontWeight: 'bold',
   fontSize: '1.5rem',
 }));
 
 const StyledDialogContentText = styled(DialogContentText)(() => ({
-  color: '#ffffff',
+  color: '#000000',
   textAlign: 'center',
   fontSize: '1.2rem',
 }));
 
 const StyledButton = styled(Button)(() => ({
   fontWeight: 'bold',
-  color: '#ffffff',
+  color: '#000000',
   borderRadius: '25px',
   '&:hover': {
-    backgroundColor: '#ffffff33',
+    backgroundColor: '#C3C3C3',
   },
 }));
 
