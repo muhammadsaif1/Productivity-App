@@ -1,16 +1,7 @@
 import axios, { AxiosError } from 'axios';
 import React, { createContext, useState, ReactNode, useEffect } from 'react';
 import dayjs from 'dayjs';
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Button,
-  styled,
-  CircularProgress,
-} from '@mui/material';
+
 import { useNavigate } from 'react-router-dom';
 export type Task = {
   _id: string;
@@ -47,6 +38,9 @@ interface ContextType {
   openModalHandler: () => void;
   closeModalHandler: () => void;
   submitHandler: (e: React.FormEvent<HTMLFormElement>) => Promise<void>;
+  isDialogOpen: boolean;
+  isDeleting: boolean;
+  closeDialog: () => void;
 }
 
 export const TaskContext = createContext<ContextType>({
@@ -78,36 +72,10 @@ export const TaskContext = createContext<ContextType>({
   openModalHandler: () => {},
   closeModalHandler: () => {},
   submitHandler: async () => {},
+  isDialogOpen: false,
+  isDeleting: false,
+  closeDialog: () => {},
 });
-
-const StyledDialog = styled(Dialog)(() => ({
-  '& .MuiDialog-paper': {
-    background: '#ffffff',
-    borderRadius: '15px',
-  },
-}));
-
-const StyledDialogTitle = styled(DialogTitle)(() => ({
-  color: '#000000',
-  textAlign: 'center',
-  fontWeight: 'bold',
-  fontSize: '1.5rem',
-}));
-
-const StyledDialogContentText = styled(DialogContentText)(() => ({
-  color: '#000000',
-  textAlign: 'center',
-  fontSize: '1.2rem',
-}));
-
-const StyledButton = styled(Button)(() => ({
-  fontWeight: 'bold',
-  color: '#000000',
-  borderRadius: '25px',
-  '&:hover': {
-    backgroundColor: '#C3C3C3',
-  },
-}));
 
 const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [mainTask, setMainTask] = useState<Task[]>([]);
@@ -219,8 +187,9 @@ const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     setAddingTask(true);
 
     const deadline: string = date ? date.toString() : '';
+    const createdAt: string = new Date().toISOString();
 
-    const taskPayload = { title, description: desc, deadline };
+    const taskPayload = { title, description: desc, deadline, createdAt };
 
     try {
       if (editingTaskIndex !== null) {
@@ -234,6 +203,7 @@ const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
           const updatedTask: Task = response.data.data;
           const updatedMainTask = [...mainTask];
           updatedMainTask[editingTaskIndex] = updatedTask;
+
           setMainTask(updatedMainTask);
         } else {
           console.error('Failed to update task:', response.data.message);
@@ -326,33 +296,12 @@ const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         setIsModalOpen,
         closeModalHandler,
         submitHandler,
+        isDeleting,
+        isDialogOpen,
+        closeDialog,
       }}
     >
       {children}
-      <StyledDialog open={isDialogOpen} onClose={closeDialog}>
-        <StyledDialogTitle>Confirm Deletion</StyledDialogTitle>
-        <DialogContent>
-          <StyledDialogContentText>
-            Are you sure you want to delete this task?
-          </StyledDialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <StyledButton onClick={closeDialog} color="primary">
-            No
-          </StyledButton>
-          <StyledButton
-            onClick={confirmDeleteHandler}
-            color="primary"
-            autoFocus
-          >
-            {isDeleting ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : (
-              'Yes'
-            )}
-          </StyledButton>
-        </DialogActions>
-      </StyledDialog>
     </TaskContext.Provider>
   );
 };
