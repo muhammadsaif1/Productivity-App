@@ -1,29 +1,28 @@
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import Home from './pages/home/index';
-import AboutUs from './pages/about-us/index';
-import Stats from './pages/stats/index';
-import Calender from './pages/calender/index';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import RootLayout from './pages/Root';
-import TaskDetail from './pages/taskDetail/index';
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <RootLayout />,
-    children: [
-      { index: true, element: <Home /> },
-      { path: 'about-us', element: <AboutUs /> },
-      { path: 'stats', element: <Stats /> },
-      { path: 'calendar', element: <Calender /> },
-      { path: '/task/:taskId', element: <TaskDetail /> },
-    ],
-  },
-]);
-function App() {
+import Home from './pages/home';
+import TaskDetail from './pages/taskDetail';
+import AboutUs from './pages/about-us';
+import Login from './auth/login';
+import Signup from './auth/signup';
+import TaskProvider from './context/TaskContext';
+
+const App = () => {
   return (
-    <>
-      <RouterProvider router={router} />
-    </>
+    <Router>
+      <TaskProvider>
+        <Routes>
+          <Route path="/" element={<RootLayout />}>
+            <Route index element={<Home />} />
+            <Route path="about-us" element={<AboutUs />} />
+            <Route path="task/:taskId" element={<TaskDetail />} />
+            <Route path="login" element={<Login />} />
+            <Route path="signup" element={<Signup />} />
+          </Route>
+        </Routes>
+      </TaskProvider>
+    </Router>
   );
-}
+};
 
 export default App;

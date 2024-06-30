@@ -1,20 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { CircularProgress, IconButton } from '@mui/material';
+import { Button, CircularProgress } from '@mui/material';
 import Text from '../../components/Custom/Typography';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { format, parseISO } from 'date-fns';
 import classes from './style.module.css';
-
-interface Task {
-  _id: string;
-  title: string;
-  description: string;
-  createdAt: string;
-  deadline: string;
-}
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Task, TaskContext } from '../../context/TaskContext';
 
 const TaskDetail: React.FC = () => {
   const { taskId } = useParams<{ taskId: string }>();
@@ -22,6 +16,8 @@ const TaskDetail: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { mainTask, editHandler, deleteHandler } = useContext(TaskContext);
+  // const [isDeleting,setIsDeleting] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -44,44 +40,16 @@ const TaskDetail: React.FC = () => {
       }
     };
 
-    fetchTask();
-  }, []);
+    if (taskId) {
+      fetchTask();
+    } else {
+      setError('Task ID is missing');
+      setIsLoading(false);
+    }
+  }, [taskId]);
 
-  const deleteHandler = async () => {
-    if (!taskId) {
-      console.error('Task ID is missing for the task to be deleted.');
-      return;
-    }
-    try {
-      const response = await axios.delete(
-        `https://saif-project-27e9eb091b33.herokuapp.com/api/deleteTask/${taskId}`,
-      );
-      if (response.data.success) {
-        navigate('/');
-      } else {
-        console.error('Failed to delete task:', response.data.message);
-      }
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error('Error deleting task:', error.message);
-        console.log('Error response:', error.response);
-        console.log('Error response data:', error.response?.data);
-      } else {
-        console.error('Non-Axios error occurred:', error);
-      }
-    }
-  };
-
-  const editHandler = () => {
-    if (!task) {
-      console.error('Task to edit is not found.');
-      return;
-    }
-    navigate('/', {
-      state: {
-        taskToEdit: task,
-      },
-    });
+  const backHandler = () => {
+    navigate('/');
   };
 
   if (isLoading) {
@@ -96,27 +64,58 @@ const TaskDetail: React.FC = () => {
     return <Text variant="h4">Task not found</Text>;
   }
 
+  const taskIndex = mainTask.findIndex((t) => t._id === taskId);
+  if (taskIndex === -1) {
+    console.error('Task not found');
+    return <Text variant="h4">Task not found</Text>;
+  }
+
   return (
     <div className={classes.container}>
-      <Text variant="h3" className={classes.title}>
-        {task.title}
-      </Text>
-      <Text variant="body1" className={classes.description}>
-        {task.description}
-      </Text>
-      <Text variant="body2" className={classes.deadline}>
-        Due by: {format(parseISO(task.deadline), 'dd MMM, yyyy hh:mm a')}
-      </Text>
-      <Text variant="caption" className={classes.updated}>
-        Updated by: {format(parseISO(task.createdAt), 'dd MMM, yyyy hh:mm a')}
-      </Text>
-      <div className={classes.actions}>
-        <IconButton onClick={editHandler} className={classes.editButton}>
-          <EditIcon />
-        </IconButton>
-        <IconButton onClick={deleteHandler} className={classes.deleteButton}>
-          <DeleteIcon />
-        </IconButton>
+      <Button className={classes.backButton} onClick={backHandler}>
+        <ArrowBackIcon color="success" />
+      </Button>
+      <div className={classes.taskDetails}>
+        <div className={classes.header}>
+          <Text variant="h3" className={classes.title}>
+            {task.title}
+          </Text>
+          <div className={classes.taskButtons}>
+            <Button
+              variant="outlined"
+              onClick={() => editHandler(taskIndex)}
+              startIcon={<EditIcon />}
+              className={classes.editButton}
+              size="small"
+            >
+              Edit
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => deleteHandler(taskIndex)}
+              startIcon={<DeleteIcon />}
+              className={classes.deleteButton}
+              size="small"
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
+
+        <Text variant="h5" className={classes.label}>
+          Description:
+        </Text>
+        <Text variant="h5" className={classes.description}>
+          {task.description}
+        </Text>
+        <Text variant="body2" className={classes.deadline}>
+          <span className={classes.deadlineText}> Due by: </span>{' '}
+          {format(parseISO(task.deadline), 'dd MMM, yyyy hh:mm a')}
+        </Text>
+        <Text variant="caption" className={classes.updated}>
+          Last Updated:{' '}
+          {format(parseISO(task.createdAt), 'dd MMM, yyyy hh:mm a')}
+        </Text>
       </div>
     </div>
   );

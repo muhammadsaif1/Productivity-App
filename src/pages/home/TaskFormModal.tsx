@@ -1,43 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { TextField, Button, CircularProgress } from '@mui/material';
-import dayjs from 'dayjs';
 import classes from './style.module.css';
+import { TaskContext } from '../../context/TaskContext';
 
-interface TaskFormModalProps {
-  isModalOpen: boolean;
-  closeModalHandler: () => void;
-  title: string;
-  setTitle: React.Dispatch<React.SetStateAction<string>>;
-  desc: string;
-  setDesc: React.Dispatch<React.SetStateAction<string>>;
-  date: dayjs.Dayjs | null;
-  setDate: React.Dispatch<React.SetStateAction<dayjs.Dayjs | null>>;
-  submitHandler: (e: React.FormEvent<HTMLFormElement>) => void;
-  titleError: boolean;
-  descriptionError: boolean;
-  editingTaskIndex: number | null;
-  addingTask: boolean;
-}
-
-const TaskFormModal: React.FC<TaskFormModalProps> = ({
-  isModalOpen,
-  closeModalHandler,
-  title,
-  setTitle,
-  desc,
-  setDesc,
-  date,
-  setDate,
-  submitHandler,
-  titleError,
-  descriptionError,
-  editingTaskIndex,
-  addingTask,
-}) => {
+const TaskFormModal: React.FC = () => {
   const modalStyle = {
     position: 'absolute',
     top: '50%',
@@ -51,6 +21,21 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({
     width: '80%',
     borderRadius: 4,
   };
+  const {
+    isModalOpen,
+    closeModalHandler,
+    submitHandler,
+    title,
+    setTitle,
+    titleError,
+    desc,
+    setDesc,
+    descriptionError,
+    date,
+    setDate,
+    editingTaskIndex,
+    addingTask,
+  } = useContext(TaskContext);
   return (
     <Modal open={isModalOpen} onClose={closeModalHandler}>
       <Box sx={modalStyle}>
