@@ -1,39 +1,13 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import { LocalizationProvider, DateTimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { TextField, Button } from '@mui/material';
-import dayjs from 'dayjs';
+import { TextField, Button, CircularProgress } from '@mui/material';
 import classes from './style.module.css';
+import { TaskContext } from '../../context/TaskContext';
 
-interface TaskFormModalProps {
-  isModalOpen: boolean;
-  closeModalHandler: () => void;
-  title: string;
-  setTitle: React.Dispatch<React.SetStateAction<string>>;
-  desc: string;
-  setDesc: React.Dispatch<React.SetStateAction<string>>;
-  date: dayjs.Dayjs | null;
-  setDate: React.Dispatch<React.SetStateAction<dayjs.Dayjs | null>>;
-  submitHandler: (e: React.FormEvent<HTMLFormElement>) => void;
-  titleError: boolean;
-  editingTaskIndex: number | null;
-}
-
-const TaskFormModal: React.FC<TaskFormModalProps> = ({
-  isModalOpen,
-  closeModalHandler,
-  title,
-  setTitle,
-  desc,
-  setDesc,
-  date,
-  setDate,
-  submitHandler,
-  titleError,
-  editingTaskIndex,
-}) => {
+const TaskFormModal: React.FC = () => {
   const modalStyle = {
     position: 'absolute',
     top: '50%',
@@ -47,7 +21,21 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({
     width: '80%',
     borderRadius: 4,
   };
-
+  const {
+    isModalOpen,
+    closeModalHandler,
+    submitHandler,
+    title,
+    setTitle,
+    titleError,
+    desc,
+    setDesc,
+    descriptionError,
+    date,
+    setDate,
+    editingTaskIndex,
+    addingTask,
+  } = useContext(TaskContext);
   return (
     <Modal open={isModalOpen} onClose={closeModalHandler}>
       <Box sx={modalStyle}>
@@ -76,6 +64,8 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({
             onChange={(e) => setDesc(e.target.value)}
             fullWidth
             margin="normal"
+            error={descriptionError}
+            helperText={descriptionError ? '*Description is required' : ''}
           />
 
           <div className={classes.dateContainer}>
@@ -90,12 +80,22 @@ const TaskFormModal: React.FC<TaskFormModalProps> = ({
 
           <div className={classes.modalButtons}>
             {editingTaskIndex !== null ? (
-              <Button type="submit" variant="contained" color="primary">
-                Update
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={addingTask}
+              >
+                {addingTask ? <CircularProgress size={20} /> : 'Update'}
               </Button>
             ) : (
-              <Button type="submit" variant="contained" color="primary">
-                Add Task
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                disabled={addingTask}
+              >
+                {addingTask ? <CircularProgress size={20} /> : 'Add Task'}
               </Button>
             )}
             <Button

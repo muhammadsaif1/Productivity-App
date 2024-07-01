@@ -108,34 +108,7 @@ function Navbar() {
                     </NavLink>
                   </Typography>
                 </MenuItem>
-                <MenuItem onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">
-                    <NavLink
-                      to="/calendar"
-                      style={{ textDecoration: 'none', color: 'inherit' }}
-                      className={({ isActive }) =>
-                        isActive ? classes.active : undefined
-                      }
-                      end
-                    >
-                      Calendar
-                    </NavLink>
-                  </Typography>
-                </MenuItem>
-                <MenuItem onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">
-                    <NavLink
-                      to="/stats"
-                      style={{ textDecoration: 'none', color: 'inherit' }}
-                      className={({ isActive }) =>
-                        isActive ? classes.active : undefined
-                      }
-                      end
-                    >
-                      Stats
-                    </NavLink>
-                  </Typography>
-                </MenuItem>
+
                 <MenuItem onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">
                     <NavLink
@@ -189,34 +162,7 @@ function Navbar() {
               >
                 Home
               </Button>
-              <Button
-                onClick={handleCloseNavMenu}
-                sx={{
-                  my: 2,
-                  color: 'white',
-                  display: 'block',
-                  fontWeight:
-                    location.pathname === '/calendar' ? 'bold' : 'normal',
-                }}
-                component={NavLink}
-                to="/calendar"
-              >
-                Calendar
-              </Button>
-              <Button
-                onClick={handleCloseNavMenu}
-                sx={{
-                  my: 2,
-                  color: 'white',
-                  display: 'block',
-                  fontWeight:
-                    location.pathname === '/stats' ? 'bold' : 'normal',
-                }}
-                component={NavLink}
-                to="/stats"
-              >
-                Stats
-              </Button>
+
               <Button
                 onClick={handleCloseNavMenu}
                 sx={{

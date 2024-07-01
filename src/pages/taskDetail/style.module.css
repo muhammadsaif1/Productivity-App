@@ -1,0 +1,68 @@
+.container {
+  padding: 20px;
+  margin-bottom: 20px;
+  max-width: 1400px;
+  width: 100%;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  position: relative;
+}
+
+.backButton {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.title {
+  font-weight: bold !important;
+}
+
+.taskButtons {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.editButton {
+  color: green !important;
+  border-color: green !important;
+}
+
+.deleteButton {
+  color: red !important;
+  border-color: red !important;
+}
+
+.taskDetails {
+  margin-top: 20px;
+  margin-left: 100px;
+}
+
+.label {
+  margin-bottom: 5px !important;
+  font-weight: 700 !important;
+}
+
+.description {
+  margin-bottom: 15px !important;
+}
+
+.deadline {
+  font-size: 14px !important;
+}
+
+.deadlineText {
+  font-weight: 600;
+}
+
+.updated {
+  font-size: 10px !important;
+  color: #888 !important;
+  margin-top: 5px !important;
+}
