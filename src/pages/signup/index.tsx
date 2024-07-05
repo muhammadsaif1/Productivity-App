@@ -3,6 +3,7 @@ import { Button, CircularProgress, TextField } from '@mui/material';
 import React, { useState } from 'react';
 import classes from './style.module.css';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 const Signup: React.FC = () => {
   const [username, setUsername] = useState<string>('');
@@ -166,6 +167,15 @@ const Signup: React.FC = () => {
               )}
             </Button>
           </div>
+          <Link
+            to={'/signin'}
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
+            Already have an account? login here
+          </Link>
         </form>
       </div>
     </>

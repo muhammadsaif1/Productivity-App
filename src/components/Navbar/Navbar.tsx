@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -19,11 +19,18 @@ function Navbar() {
   );
 
   const location = useLocation();
+  const navigate = useNavigate();
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
 
+  const handleSignOut = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
+
+  const isLoggedIn = !!localStorage.getItem('token');
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
@@ -177,6 +184,31 @@ function Navbar() {
               >
                 About Us
               </Button>
+              {!isLoggedIn ? (
+                <Button
+                  onClick={handleCloseNavMenu}
+                  sx={{
+                    my: 2,
+                    color: 'white',
+                    display: 'block',
+                  }}
+                  component={NavLink}
+                  to="/signin"
+                >
+                  Sign In
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleSignOut}
+                  sx={{
+                    my: 2,
+                    color: 'white',
+                    display: 'block',
+                  }}
+                >
+                  Sign Out
+                </Button>
+              )}
             </Box>
           </Toolbar>
         </Container>

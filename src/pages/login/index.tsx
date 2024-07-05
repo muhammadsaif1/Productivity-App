@@ -3,6 +3,7 @@ import { Button, CircularProgress, TextField } from '@mui/material';
 import React, { useState } from 'react';
 import classes from './style.module.css';
 import axios from 'axios';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Signin: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -10,7 +11,7 @@ const Signin: React.FC = () => {
   const [emailError, setEmailError] = useState<boolean>(false);
   const [passwordError, setPasswordError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
+  const navigate = useNavigate();
   const cancelHandler = () => {
     setEmailError(false);
     setPasswordError(false);
@@ -38,11 +39,16 @@ const Signin: React.FC = () => {
           password,
         },
       );
+      localStorage.setItem('token', response.data.token);
+
       cancelHandler();
+      navigate('/');
+
       console.log('Signin successful', response.data);
     } catch (error) {
       console.error('Signin failed', error);
     }
+    setIsLoading(false);
   };
 
   return (
@@ -112,6 +118,15 @@ const Signin: React.FC = () => {
               )}
             </Button>
           </div>
+          <Link
+            to={'/signup'}
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+            }}
+          >
+            Dont't have an account? register
+          </Link>
         </form>
       </div>
     </>
