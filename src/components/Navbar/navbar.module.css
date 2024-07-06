@@ -2,3 +2,32 @@
   text-decoration: underline;
   font-weight: bold;
 }
+
+.buttonRight {
+  position: absolute;
+  left: 30rem;
+}
+
+@media (max-width: 1200px) {
+  .buttonRight {
+    left: 15rem;
+  }
+}
+
+@media (max-width: 992px) {
+  .buttonRight {
+    left: 10rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .buttonRight {
+    left: 5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .buttonRight {
+    left: 1rem;
+  }
+}

@@ -34,7 +34,6 @@ function Navbar() {
     navigate('/');
   };
 
-  const isLoggedIn = !!localStorage.getItem('token');
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
@@ -105,20 +104,24 @@ function Navbar() {
                   display: { xs: 'block', md: 'none' },
                 }}
               >
-                <MenuItem onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">
-                    <NavLink
-                      to="/"
-                      style={{ textDecoration: 'none', color: 'inherit' }}
-                      className={({ isActive }) =>
-                        isActive ? classes.active : undefined
-                      }
-                      end
-                    >
-                      Home
-                    </NavLink>
-                  </Typography>
-                </MenuItem>
+                {authContext?.isAuthenticated ? (
+                  <MenuItem onClick={handleCloseNavMenu}>
+                    <Typography textAlign="center">
+                      <NavLink
+                        to="/"
+                        style={{ textDecoration: 'none', color: 'inherit' }}
+                        className={({ isActive }) =>
+                          isActive ? classes.active : undefined
+                        }
+                        end
+                      >
+                        Home
+                      </NavLink>
+                    </Typography>
+                  </MenuItem>
+                ) : (
+                  ''
+                )}
 
                 <MenuItem onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">
@@ -132,6 +135,34 @@ function Navbar() {
                     >
                       About Us
                     </NavLink>
+                  </Typography>
+                </MenuItem>
+                <MenuItem onClick={handleCloseNavMenu}>
+                  <Typography textAlign="center">
+                    {!authContext?.isAuthenticated ? (
+                      <NavLink
+                        to="/signin"
+                        style={{ textDecoration: 'none', color: 'inherit' }}
+                        className={({ isActive }) =>
+                          isActive ? classes.active : undefined
+                        }
+                        end
+                      >
+                        Login
+                      </NavLink>
+                    ) : (
+                      <NavLink
+                        to="/signin"
+                        onClick={handleSignOut}
+                        style={{ textDecoration: 'none', color: 'inherit' }}
+                        className={({ isActive }) =>
+                          isActive ? classes.active : undefined
+                        }
+                        end
+                      >
+                        Log Out
+                      </NavLink>
+                    )}
                   </Typography>
                 </MenuItem>
               </Menu>
@@ -160,19 +191,23 @@ function Navbar() {
                 justifyContent: 'center',
               }}
             >
-              <Button
-                onClick={handleCloseNavMenu}
-                sx={{
-                  my: 2,
-                  color: 'white',
-                  display: 'block',
-                  fontWeight: location.pathname === '/' ? 'bold' : 'normal',
-                }}
-                component={NavLink}
-                to="/"
-              >
-                Home
-              </Button>
+              {authContext?.isAuthenticated ? (
+                <Button
+                  onClick={handleCloseNavMenu}
+                  sx={{
+                    my: 2,
+                    color: 'white',
+                    display: 'block',
+                    fontWeight: location.pathname === '/' ? 'bold' : 'normal',
+                  }}
+                  component={NavLink}
+                  to="/"
+                >
+                  Home
+                </Button>
+              ) : (
+                ''
+              )}
 
               <Button
                 onClick={handleCloseNavMenu}
@@ -188,8 +223,9 @@ function Navbar() {
               >
                 About Us
               </Button>
-              {!isLoggedIn ? (
+              {!authContext?.isAuthenticated ? (
                 <Button
+                  className={classes.buttonRight}
                   onClick={handleCloseNavMenu}
                   sx={{
                     my: 2,
@@ -199,10 +235,11 @@ function Navbar() {
                   component={NavLink}
                   to="/signin"
                 >
-                  Sign In
+                  Log In
                 </Button>
               ) : (
                 <Button
+                  className={classes.buttonRight}
                   onClick={handleSignOut}
                   sx={{
                     my: 2,
@@ -210,7 +247,7 @@ function Navbar() {
                     display: 'block',
                   }}
                 >
-                  Sign Out
+                  Log Out
                 </Button>
               )}
             </Box>

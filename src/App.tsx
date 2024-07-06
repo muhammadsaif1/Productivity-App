@@ -25,14 +25,7 @@ const App = () => {
                   </PrivateRoute>
                 }
               />
-              <Route
-                path="about-us"
-                element={
-                  <PrivateRoute>
-                    <AboutUs />
-                  </PrivateRoute>
-                }
-              />
+              <Route path="about-us" element={<AboutUs />} />
               <Route
                 path="task/:taskId"
                 element={
