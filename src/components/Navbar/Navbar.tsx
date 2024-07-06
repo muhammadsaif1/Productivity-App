@@ -12,6 +12,8 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import classes from './navbar.module.css';
 import { CssBaseline } from '@mui/material';
+import { AuthContext } from '../../context/AuthContext';
+import { useContext } from 'react';
 
 function Navbar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -20,6 +22,7 @@ function Navbar() {
 
   const location = useLocation();
   const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -27,6 +30,7 @@ function Navbar() {
 
   const handleSignOut = () => {
     localStorage.removeItem('token');
+    authContext?.logout();
     navigate('/');
   };
 

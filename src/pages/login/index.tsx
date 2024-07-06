@@ -1,9 +1,10 @@
 import Text from '../../components/Custom/Typography';
 import { Button, CircularProgress, TextField } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import classes from './style.module.css';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
 
 const Signin: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -12,6 +13,7 @@ const Signin: React.FC = () => {
   const [passwordError, setPasswordError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
   const cancelHandler = () => {
     setEmailError(false);
     setPasswordError(false);
@@ -43,6 +45,7 @@ const Signin: React.FC = () => {
 
       cancelHandler();
       navigate('/');
+      authContext?.login();
 
       console.log('Signin successful', response.data);
     } catch (error) {
