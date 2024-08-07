@@ -116,8 +116,18 @@ const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }
     setIsDeleting(true);
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found');
+        return;
+      }
       const response = await axios.delete(
         `https://saif-project-27e9eb091b33.herokuapp.com/api/deleteTask/${taskId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
       );
       if (response.data.success) {
         const updatedTasks = mainTask.filter(
@@ -192,11 +202,21 @@ const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     const taskPayload = { title, description: desc, deadline, createdAt };
 
     try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found');
+        return;
+      }
       if (editingTaskIndex !== null) {
         const taskId = mainTask[editingTaskIndex]._id;
         const response = await axios.put(
           `https://saif-project-27e9eb091b33.herokuapp.com/api/updateTask/${taskId}`,
           taskPayload,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
 
         if (response.data.success) {
@@ -212,6 +232,12 @@ const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         const response = await axios.post(
           'https://saif-project-27e9eb091b33.herokuapp.com/api/createTask',
           taskPayload,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          },
         );
 
         if (response.data.success) {
@@ -238,8 +264,18 @@ const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.error('No token found');
+          return;
+        }
         const response = await axios.get<{ success: boolean; data: Task[] }>(
           'https://saif-project-27e9eb091b33.herokuapp.com/api/fetchTasks',
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
         if (response.data.success) {
           const data = response.data.data.map((item) => ({

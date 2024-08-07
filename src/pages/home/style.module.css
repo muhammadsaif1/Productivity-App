@@ -164,9 +164,13 @@
     padding: 10px;
   }
   .plusButton {
-    width: 1.8rem !important;
-    height: 1.8rem !important;
-    right: 3.7em;
+    position: absolute !important;
+    margin-top: 1rem;
+    width: auto;
+    text-align: center;
+    z-index: 1;
+    font-size: 0.8rem;
+    padding: 8px 16px;
   }
   .taskTitle {
     font-size: 16px !important;

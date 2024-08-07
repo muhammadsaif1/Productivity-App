@@ -21,8 +21,18 @@ const TaskDetail: React.FC = () => {
   useEffect(() => {
     const fetchTask = async () => {
       try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.error('No token found');
+          return;
+        }
         const response = await axios.get<{ success: boolean; data: Task }>(
           `https://saif-project-27e9eb091b33.herokuapp.com/api/fetchTask/${taskId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
         if (response.data.success) {
           // setTask(response.data.data);

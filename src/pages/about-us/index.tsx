@@ -1,6 +1,6 @@
 import React from 'react';
 
-const AboutUs: React.FC = () => {
+const AboutMe: React.FC = () => {
   return (
     <>
       <h1>About us</h1>
@@ -8,4 +8,4 @@ const AboutUs: React.FC = () => {
   );
 };
 
-export default AboutUs;
+export default AboutMe;

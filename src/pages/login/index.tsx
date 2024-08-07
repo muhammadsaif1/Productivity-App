@@ -40,6 +40,7 @@ const Signin: React.FC = () => {
           email,
           password,
         },
+        { headers: { 'Content-Type': 'application/json' } },
       );
       localStorage.setItem('token', response.data.token);
 

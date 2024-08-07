@@ -2,13 +2,13 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import RootLayout from './pages/Root';
 import Home from './pages/home';
 import TaskDetail from './pages/taskDetail';
-import AboutUs from './pages/about-us';
 import Login from './pages/login';
 import Signup from './pages/signup';
 import TaskProvider from './context/TaskContext';
 import AuthProvider from './context/AuthContext';
 
 import { PrivateRoute } from './components/Custom/PrivateRoute';
+import AboutMe from './pages/about-us';
 
 const App = () => {
   return (
@@ -25,7 +25,7 @@ const App = () => {
                   </PrivateRoute>
                 }
               />
-              <Route path="about-us" element={<AboutUs />} />
+              <Route path="about-me" element={<AboutMe />} />
               <Route
                 path="task/:taskId"
                 element={

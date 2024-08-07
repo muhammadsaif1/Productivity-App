@@ -126,14 +126,14 @@ function Navbar() {
                 <MenuItem onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">
                     <NavLink
-                      to="/about-us"
+                      to="/about-me"
                       style={{ textDecoration: 'none', color: 'inherit' }}
                       className={({ isActive }) =>
                         isActive ? classes.active : undefined
                       }
                       end
                     >
-                      About Us
+                      About Me
                     </NavLink>
                   </Typography>
                 </MenuItem>
@@ -219,9 +219,9 @@ function Navbar() {
                     location.pathname === '/about-us' ? 'bold' : 'normal',
                 }}
                 component={NavLink}
-                to="/about-us"
+                to="/about-me"
               >
-                About Us
+                About Me
               </Button>
               {!authContext?.isAuthenticated ? (
                 <Button
