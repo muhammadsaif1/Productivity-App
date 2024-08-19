@@ -12,7 +12,7 @@ import { Task, TaskContext } from '../../context/TaskContext';
 
 const TaskDetail: React.FC = () => {
   const { taskId } = useParams<{ taskId: string }>();
-  const [task, setTask] = useState<Task | null>(null);
+  // const [task, setTask] = useState<Task | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -21,11 +21,21 @@ const TaskDetail: React.FC = () => {
   useEffect(() => {
     const fetchTask = async () => {
       try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          console.error('No token found');
+          return;
+        }
         const response = await axios.get<{ success: boolean; data: Task }>(
           `https://saif-project-27e9eb091b33.herokuapp.com/api/fetchTask/${taskId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
         );
         if (response.data.success) {
-          setTask(response.data.data);
+          // setTask(response.data.data);
         } else {
           console.error('Task not found in response:', response);
           setError('Task not found');
@@ -57,6 +67,7 @@ const TaskDetail: React.FC = () => {
   if (error) {
     return <Text variant="h4">{error}</Text>;
   }
+  const task = mainTask.find((t) => t._id === taskId);
 
   if (!task) {
     return <Text variant="h4">Task not found</Text>;

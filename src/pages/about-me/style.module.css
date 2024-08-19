@@ -1,0 +1,105 @@
+.container {
+  margin-top: 30px;
+  padding: 0 15px;
+}
+
+.paper {
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.4) !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.avatar {
+  width: 100% !important;
+  height: auto !important;
+  border-radius: 50% !important ;
+}
+
+.contactInfo {
+  margin-top: 20px;
+}
+
+.contactItem {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.contactIcon {
+  margin-right: 10px;
+}
+
+.name {
+  text-decoration: none !important;
+}
+
+@media (max-width: 600px) {
+  .container {
+    margin-top: 20px;
+    padding: 0 10px;
+  }
+
+  .paper {
+    padding: 15px;
+  }
+
+  .avatar {
+    width: 80%;
+  }
+
+  .contactInfo {
+    margin-top: 15px;
+  }
+
+  .contactItem {
+    margin-bottom: 8px;
+  }
+}
+
+@media (min-width: 601px) and (max-width: 960px) {
+  .container {
+    margin-top: 25px;
+    padding: 0 20px;
+  }
+
+  .paper {
+    padding: 18px;
+  }
+
+  .avatar {
+    width: 90%;
+  }
+
+  .contactInfo {
+    margin-top: 18px;
+  }
+
+  .contactItem {
+    margin-bottom: 9px;
+  }
+}
+
+@media (min-width: 961px) {
+  .container {
+    margin-top: 30px;
+    padding: 0 30px;
+  }
+
+  .paper {
+    padding: 20px;
+  }
+
+  .avatar {
+    width: 100%;
+  }
+
+  .contactInfo {
+    margin-top: 20px;
+  }
+
+  .contactItem {
+    margin-bottom: 10px;
+  }
+}

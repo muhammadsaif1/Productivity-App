@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Text from '../../components/Custom/Typography';
 import { Button, CircularProgress, IconButton } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
@@ -14,8 +14,20 @@ const currentDay: string = new Date().toLocaleDateString('en-US', {
 });
 
 const Home: React.FC = () => {
-  const { mainTask, deleteHandler, isLoading, editHandler, openModalHandler } =
-    useContext(TaskContext);
+  const {
+    mainTask,
+    deleteHandler,
+    isLoading,
+    editHandler,
+    openModalHandler,
+    setIsLoading,
+    fetchTasks,
+  } = useContext(TaskContext);
+
+  useEffect(() => {
+    setIsLoading(true);
+    fetchTasks();
+  }, []);
 
   return (
     <div className={classes.head}>
