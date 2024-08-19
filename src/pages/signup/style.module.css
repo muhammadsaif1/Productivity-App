@@ -33,6 +33,20 @@
   margin-top: 1rem;
 }
 
+.errorContainer {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  border: 1px solid red;
+  border-radius: 4px;
+  background-color: #f8d7da;
+}
+
+.errorText {
+  color: red;
+  font-size: 0.875rem;
+  margin-top: 0.5rem;
+}
+
 @media (max-width: 768px) {
   .container {
     padding: 0.5rem;
@@ -49,6 +63,13 @@
 
   .buttonContainer {
     margin-top: 0.75rem;
+  }
+  .errorContainer {
+    padding: 0.5rem;
+  }
+
+  .errorText {
+    font-size: 0.75rem;
   }
 }
 
@@ -74,6 +95,13 @@
   .buttonContainer button {
     width: 100%;
   }
+  .errorContainer {
+    padding: 0.5rem;
+  }
+
+  .errorText {
+    font-size: 0.725rem;
+  }
 }
 
 @media (max-width: 320px) {
@@ -98,6 +126,13 @@
   .buttonContainer button {
     width: 100%;
   }
+  .errorContainer {
+    padding: 0.25rem;
+  }
+
+  .errorText {
+    font-size: 0.65rem;
+  }
 }
 
 @media (min-width: 1200px) {
@@ -116,5 +151,12 @@
 
   .buttonContainer {
     margin-top: 1.5rem;
+  }
+  .errorContainer {
+    padding: 0.75rem;
+  }
+
+  .errorText {
+    font-size: 0.875rem;
   }
 }

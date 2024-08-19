@@ -5,6 +5,7 @@ import classes from './style.module.css';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
+import ErrorBoundary from '../../components/Error/ErrorBoundary';
 
 const Signin: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -12,34 +13,38 @@ const Signin: React.FC = () => {
   const [emailError, setEmailError] = useState<boolean>(false);
   const [passwordError, setPasswordError] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [serverError, setServerError] = useState<string | null>(null);
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
+
   const cancelHandler = () => {
     setEmailError(false);
     setPasswordError(false);
     setEmail('');
     setPassword('');
     setIsLoading(false);
+    setServerError(null);
   };
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (email.length === 0 || !email.length) {
+    setServerError(null);
+
+    if (!email) {
       setEmailError(true);
       return;
     }
-    if (password.length === 0 || !password.length) {
+    if (!password) {
       setPasswordError(true);
       return;
     }
+
     setIsLoading(true);
+
     try {
       const response = await axios.post(
         'https://saif-project-27e9eb091b33.herokuapp.com/api/signin',
-        {
-          email,
-          password,
-        },
+        { email, password },
         { headers: { 'Content-Type': 'application/json' } },
       );
       localStorage.setItem('token', response.data.token);
@@ -50,13 +55,29 @@ const Signin: React.FC = () => {
 
       console.log('Signin successful', response.data);
     } catch (error) {
-      console.error('Signin failed', error);
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          setServerError(
+            error.response.data.message ||
+              'An error occurred while signing in.',
+          );
+        } else if (error.request) {
+          setServerError(
+            'No response from the server. Please try again later.',
+          );
+        } else {
+          setServerError('An unexpected error occurred.');
+        }
+      } else {
+        setServerError('An unexpected error occurred.');
+      }
     }
+
     setIsLoading(false);
   };
 
   return (
-    <>
+    <ErrorBoundary>
       <div className={classes.container}>
         <Text
           className={classes.mainText}
@@ -100,6 +121,13 @@ const Signin: React.FC = () => {
             error={passwordError}
             helperText={passwordError ? '*Password is required' : ''}
           />
+          {serverError && (
+            <div className={classes.errorContainer}>
+              <Text className={classes.errorText} color="error">
+                {serverError}
+              </Text>
+            </div>
+          )}
           <div className={classes.buttonContainer}>
             <Button
               size="large"
@@ -129,11 +157,11 @@ const Signin: React.FC = () => {
               justifyContent: 'center',
             }}
           >
-            Dont't have an account? register
+            Don’t have an account? Register
           </Link>
         </form>
       </div>
-    </>
+    </ErrorBoundary>
   );
 };
 

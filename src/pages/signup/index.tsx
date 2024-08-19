@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import classes from './style.module.css';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import ErrorBoundary from '../../components/Error/ErrorBoundary';
 
 const Signup: React.FC = () => {
   const [username, setUsername] = useState<string>('');
@@ -13,37 +14,37 @@ const Signup: React.FC = () => {
   const [usernameError, setUsernameError] = useState<boolean>(false);
   const [emailError, setEmailError] = useState<boolean>(false);
   const [passwordError, setPasswordError] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [confirmPasswordError, setConfirmPasswordError] =
     useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [serverError, setServerError] = useState<string | null>(null);
 
   const cancelHandler = () => {
-    setConfirmPasswordError(false);
+    setUsernameError(false);
     setEmailError(false);
     setPasswordError(false);
-    setUsernameError(false);
+    setConfirmPasswordError(false);
     setUsername('');
     setEmail('');
     setPassword('');
     setConfirmPassword('');
     setIsLoading(false);
+    setServerError(null);
   };
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (username.length === 0 || !username.length) {
+    setServerError(null); // Reset server error on new submission attempt
+
+    if (username.length === 0) {
       setUsernameError(true);
       return;
     }
-    if (email.length === 0 || !email.length) {
+    if (email.length === 0) {
       setEmailError(true);
       return;
     }
-    if (password.length === 0 || !password.length) {
-      setPasswordError(true);
-      return;
-    }
-    if (!/^(?=.*[0-9])/.test(password)) {
+    if (password.length === 0 || !/^(?=.*[0-9])/.test(password)) {
       setPasswordError(true);
       return;
     }
@@ -51,25 +52,40 @@ const Signup: React.FC = () => {
       setConfirmPasswordError(true);
       return;
     }
+
     setIsLoading(true);
+
     try {
       const response = await axios.post(
         'https://saif-project-27e9eb091b33.herokuapp.com/api/signup',
-        {
-          username,
-          email,
-          password,
-        },
+        { username, email, password },
       );
       cancelHandler();
       console.log('Registration successful', response.data);
     } catch (error) {
-      console.error('Registration failed', error);
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          setServerError(
+            error.response.data.message ||
+              'An error occurred during registration.',
+          );
+        } else if (error.request) {
+          setServerError(
+            'No response from the server. Please try again later.',
+          );
+        } else {
+          setServerError('An unexpected error occurred.');
+        }
+      } else {
+        setServerError('An unexpected error occurred.');
+      }
     }
+
+    setIsLoading(false);
   };
 
   return (
-    <>
+    <ErrorBoundary>
       <div className={classes.container}>
         <Text
           className={classes.mainText}
@@ -98,7 +114,6 @@ const Signup: React.FC = () => {
           <label className={classes.label} htmlFor="email">
             <Text fontWeight={600}>Email</Text>
           </label>
-
           <TextField
             id="email"
             label="email"
@@ -114,8 +129,8 @@ const Signup: React.FC = () => {
             helperText={emailError ? '*Email is required' : ''}
           />
           <label className={classes.label} htmlFor="password">
-            <Text fontWeight={600}> Password</Text>
-            <span>must contain atleast one numer[0-9]</span>
+            <Text fontWeight={600}>Password</Text>
+            <span>Must contain at least one number [0-9]</span>
           </label>
           <TextField
             id="password"
@@ -129,10 +144,17 @@ const Signup: React.FC = () => {
               if (passwordError) setPasswordError(false);
             }}
             error={passwordError}
-            helperText={passwordError ? '*Password is required' : ''}
+            helperText={
+              passwordError
+                ? '*Password is required and must contain at least one number'
+                : ''
+            }
           />
+          <label className={classes.label} htmlFor="confirmPassword">
+            <Text fontWeight={600}>Confirm Password</Text>
+          </label>
           <TextField
-            id="changePassword"
+            id="confirmPassword"
             label="Confirm Password"
             variant="outlined"
             type="password"
@@ -143,8 +165,15 @@ const Signup: React.FC = () => {
               if (confirmPasswordError) setConfirmPasswordError(false);
             }}
             error={confirmPasswordError}
-            helperText={confirmPasswordError ? "Password doesn't match" : ''}
+            helperText={confirmPasswordError ? "Passwords don't match" : ''}
           />
+          {serverError && (
+            <div className={classes.errorContainer}>
+              <Text className={classes.errorText} color="error">
+                {serverError}
+              </Text>
+            </div>
+          )}
           <div className={classes.buttonContainer}>
             <Button
               size="large"
@@ -174,11 +203,11 @@ const Signup: React.FC = () => {
               justifyContent: 'center',
             }}
           >
-            Already have an account? login here
+            Already have an account? Login here
           </Link>
         </form>
       </div>
-    </>
+    </ErrorBoundary>
   );
 };
 

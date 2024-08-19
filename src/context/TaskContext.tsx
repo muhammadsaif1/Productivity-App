@@ -41,11 +41,18 @@ interface ContextType {
   isDialogOpen: boolean;
   isDeleting: boolean;
   closeDialog: () => void;
+  fetchTasks: () => void;
 }
 
 export const TaskContext = createContext<ContextType>({
   mainTask: [
-    { _id: '', title: '', description: '', createdAt: '', deadline: '' },
+    {
+      _id: '',
+      title: '',
+      description: '',
+      createdAt: '',
+      deadline: '',
+    },
   ],
   setMainTask: () => {},
   deleteHandler: () => {},
@@ -75,6 +82,7 @@ export const TaskContext = createContext<ContextType>({
   isDialogOpen: false,
   isDeleting: false,
   closeDialog: () => {},
+  fetchTasks: () => {},
 });
 
 const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
@@ -90,6 +98,7 @@ const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
+
   const navigate = useNavigate();
 
   const [taskToDeleteIndex, setTaskToDeleteIndex] = useState<number | null>(
@@ -261,45 +270,46 @@ const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     closeModalHandler();
   };
 
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          console.error('No token found');
-          return;
-        }
-        const response = await axios.get<{ success: boolean; data: Task[] }>(
-          'https://saif-project-27e9eb091b33.herokuapp.com/api/fetchTasks',
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+  const fetchTasks = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('No token found');
+      return;
+    }
+    try {
+      const response = await axios.get<{ success: boolean; data: Task[] }>(
+        'https://saif-project-27e9eb091b33.herokuapp.com/api/fetchTasks',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
-        if (response.data.success) {
-          const data = response.data.data.map((item) => ({
-            title: item.title,
-            description: item.description,
-            _id: item._id,
-            createdAt: item.createdAt,
-            deadline: item.deadline,
-          }));
-          setMainTask(data.reverse());
-        } else {
-          console.error('Failed to fetch tasks:', response.data);
-        }
-      } catch (err) {
-        const error = err as AxiosError;
-        console.error(
-          'Error fetching tasks:',
-          error.message,
-          error.response?.data,
-        );
+        },
+      );
+      if (response.data.success) {
+        setIsLoading(true);
+        const data = response.data.data.map((item) => ({
+          title: item.title,
+          description: item.description,
+          _id: item._id,
+          createdAt: item.createdAt,
+          deadline: item.deadline,
+        }));
+        setMainTask(data.reverse());
+      } else {
+        console.error('Failed to fetch tasks:', response.data);
       }
-      setIsLoading(false);
-    };
+    } catch (err) {
+      const error = err as AxiosError;
+      console.error(
+        'Error fetching tasks:',
+        error.message,
+        error.response?.data,
+      );
+    }
+    setIsLoading(false);
+  };
 
+  useEffect(() => {
     fetchTasks();
   }, []);
 
@@ -335,6 +345,7 @@ const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         isDeleting,
         isDialogOpen,
         closeDialog,
+        fetchTasks,
       }}
     >
       {children}

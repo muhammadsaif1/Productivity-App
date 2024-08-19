@@ -8,7 +8,7 @@ import TaskProvider from './context/TaskContext';
 import AuthProvider from './context/AuthContext';
 
 import { PrivateRoute } from './components/Custom/PrivateRoute';
-import AboutMe from './pages/about-us';
+import AboutMe from './pages/about-me';
 
 const App = () => {
   return (
