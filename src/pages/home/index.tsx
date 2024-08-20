@@ -60,7 +60,7 @@ const Home: React.FC = () => {
                             {t.title}
                           </NavLink>
                         </Text>
-                        <div className="taskButtons">
+                        <div className={classes.taskButtons}>
                           <IconButton
                             onClick={() => {
                               editHandler(i);

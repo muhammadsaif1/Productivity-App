@@ -66,3 +66,150 @@
   color: #888 !important;
   margin-top: 5px !important;
 }
+
+@media (max-width: 1200px) {
+  .container {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .taskDetails {
+    margin-left: 80px;
+  }
+
+  .taskButtons {
+    gap: 8px;
+  }
+
+  .label {
+    font-size: 14px;
+  }
+
+  .deadline {
+    font-size: 13px !important;
+  }
+
+  .updated {
+    font-size: 9px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  .title {
+    font-size: 1.5rem;
+    order: 2;
+    width: 100%;
+  }
+
+  .taskButtons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 15px;
+    margin-bottom: 20px;
+    order: 1;
+    position: relative;
+  }
+
+  .editButton,
+  .deleteButton {
+    flex: 1;
+    max-width: 48%;
+    text-align: center;
+  }
+
+  .taskDetails {
+    margin-left: 10px;
+    margin-top: 10px;
+  }
+}
+@media (max-width: 480px) {
+  .container {
+    padding: 10px;
+    margin-bottom: 10px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .title {
+    font-size: 1.25rem;
+    order: 2;
+    width: 100%;
+  }
+
+  .taskButtons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 15px;
+    margin-bottom: 10px; /* Ensure there's space between buttons and title */
+    order: 1; /* Ensures the buttons appear before the title */
+    position: relative; /* Remove absolute positioning */
+  }
+
+  .editButton,
+  .deleteButton {
+    flex: 1;
+    max-width: 48%;
+    text-align: center;
+  }
+
+  .taskDetails {
+    margin-left: 10px;
+    margin-top: 20px;
+  }
+}
+
+@media (max-width: 320px) {
+  .container {
+    padding: 5px;
+    margin-bottom: 5px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .taskDetails {
+    margin-left: 10px;
+    margin-top: 8px;
+  }
+
+  .taskButtons {
+    flex-direction: column;
+    gap: 4px;
+    padding: 0 10px;
+  }
+
+  .editButton,
+  .deleteButton {
+    max-width: 100%;
+  }
+
+  .label {
+    font-size: 11px;
+  }
+
+  .deadline {
+    font-size: 10px !important;
+  }
+
+  .updated {
+    font-size: 6px !important;
+  }
+}

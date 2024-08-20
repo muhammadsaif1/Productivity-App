@@ -98,7 +98,6 @@ const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
-
   const navigate = useNavigate();
 
   const [taskToDeleteIndex, setTaskToDeleteIndex] = useState<number | null>(
