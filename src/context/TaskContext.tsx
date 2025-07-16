@@ -130,7 +130,7 @@ const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         return;
       }
       const response = await axios.delete(
-        `https://saif-project-27e9eb091b33.herokuapp.com/api/deleteTask/${taskId}`,
+        `https://productivity-app-backend-rho.vercel.app/deleteTask/${taskId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -218,7 +218,7 @@ const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       if (editingTaskIndex !== null) {
         const taskId = mainTask[editingTaskIndex]._id;
         const response = await axios.put(
-          `https://saif-project-27e9eb091b33.herokuapp.com/api/updateTask/${taskId}`,
+          `https://productivity-app-backend-rho.vercel.app/api/updateTask/${taskId}`,
           taskPayload,
           {
             headers: {
@@ -238,7 +238,7 @@ const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         }
       } else {
         const response = await axios.post(
-          'https://saif-project-27e9eb091b33.herokuapp.com/api/createTask',
+          'https://productivity-app-backend-rho.vercel.app/api/createTask',
           taskPayload,
           {
             headers: {
@@ -277,7 +277,7 @@ const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     }
     try {
       const response = await axios.get<{ success: boolean; data: Task[] }>(
-        'https://saif-project-27e9eb091b33.herokuapp.com/api/fetchTasks',
+        'https://productivity-app-backend-rho.vercel.app/api/fetchTasks',
         {
           headers: {
             Authorization: `Bearer ${token}`,
