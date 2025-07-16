@@ -57,7 +57,7 @@ const Signup: React.FC = () => {
 
     try {
       const response = await axios.post(
-        'https://saif-project-27e9eb091b33.herokuapp.com/api/signup',
+        'https://productivity-app-backend-rho.vercel.app/api/signup',
         { username, email, password },
       );
       cancelHandler();
