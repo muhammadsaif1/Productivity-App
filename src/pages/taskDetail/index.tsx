@@ -27,7 +27,7 @@ const TaskDetail: React.FC = () => {
           return;
         }
         const response = await axios.get<{ success: boolean; data: Task }>(
-          `https://saif-project-27e9eb091b33.herokuapp.com/api/fetchTask/${taskId}`,
+          `https://productivity-app-backend-rho.vercel.app/api/fetchTask/${taskId}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
